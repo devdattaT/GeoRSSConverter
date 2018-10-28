@@ -29,6 +29,9 @@ def getAttributes(a):
     # This is a workaround, because there is no root element
     newXML = "<root>" + xml + "</root>"
 
+    # sometimes an & sneaks in
+    newXML = newXML.replace(' & ', ' &amp; ')
+
     props = {}
     # read the root
     tree = ET.fromstring(newXML)
@@ -51,8 +54,9 @@ def getAttributes(a):
 
 
 def getGeoJSON(geomStr, type):
+    coords = geomStr.split(' ')  # split at the space
+
     if(type == 'point'):
-        coords = geomStr.split(' ')  # split at the space
         op = {
             "type": "Point",
             "coordinates": [
@@ -61,7 +65,6 @@ def getGeoJSON(geomStr, type):
         }
         return op
     if(type == 'line'):
-        coords = geomStr.split(' ')  # split at the space
         cs = []
         for i in xrange(0, len(coords), 2):
             x = coords[i+1]
@@ -70,7 +73,15 @@ def getGeoJSON(geomStr, type):
         op = {"type": "LineString",
               "coordinates": cs}
         return op
-
+    if(type == 'polygon'):
+        cs = []
+        for i in xrange(0, len(coords), 2):
+            x = coords[i+1]
+            y = coords[i]
+            cs.append([float(x), float(y)])
+        op = {"type": "Polygon",
+              "coordinates": [cs]}
+        return op
     # We'll do the others later
     print(geomStr)
     return {}
@@ -96,7 +107,7 @@ GEORSS_NAMESPACE = '{http://www.georss.org/georss}'
 addDefaultFields = False
 
 args = sys.argv[1:]
-print(args)
+
 try:
     input_file = args[0]  # first element is path of input file
 except IndexError:
