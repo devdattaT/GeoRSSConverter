@@ -82,9 +82,9 @@ def getGeoJSON(geomStr, type):
         op = {"type": "Polygon",
               "coordinates": [cs]}
         return op
-    # We'll do the others later
-    print(geomStr)
-    return {}
+    # unexpected Geometry type
+    raise Exception(
+        "Geometry Type not one of point, line or polygon. Cannot Proceed further")
 
 
 def getGeometry(item):
