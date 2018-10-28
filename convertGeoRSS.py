@@ -60,6 +60,17 @@ def getGeoJSON(geomStr, type):
             ]
         }
         return op
+    if(type == 'line'):
+        coords = geomStr.split(' ')  # split at the space
+        cs = []
+        for i in xrange(0, len(coords), 2):
+            x = coords[i+1]
+            y = coords[i]
+            cs.append([float(x), float(y)])
+        op = {"type": "LineString",
+              "coordinates": cs}
+        return op
+
     # We'll do the others later
     print(geomStr)
     return {}

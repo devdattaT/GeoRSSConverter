@@ -2,7 +2,7 @@
 
 This is a simple Script to convert GeoRSS formated Data to GeoJSON
 
-Right now it supports only Points
+Right now it supports only Points & Lines
 
 ## How to Run
 
