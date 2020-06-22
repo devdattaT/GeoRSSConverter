@@ -2,6 +2,11 @@ import xml.etree.ElementTree as ET
 import sys
 import json
 
+def safe_str(obj):
+    try: return str(obj)
+    except UnicodeEncodeError:
+        return obj.encode('ascii', 'ignore').decode('ascii')
+    return ""
 
 def readXMLFile(xmlFile):
     # create element tree object
@@ -25,7 +30,7 @@ def readXMLFile(xmlFile):
 
 def getAttributes(a):
     # remove new lines if any
-    xml = a.replace('\n', '')
+    xml = safe_str(a).replace('\n', '')
     # This is a workaround, because there is no root element
     newXML = "<root>" + xml + "</root>"
 
@@ -142,7 +147,19 @@ for i in xmlData:
 
     # the actual attributes are in the description tag
     attribs = i['description']
-    attributes = getAttributes(attribs)
+    attributes={}
+    try:
+        if(attribs):
+            attributes = getAttributes(attribs)
+    except ET.ParseError as error:
+        #print("----------Parse Error-----------")
+        #print attribs
+        pass
+    except KeyError as error:
+        #print("----Key Error----")
+        #print attribs
+        pass
+
     f['geometry'] = getGeometry(i)
 
     # default fields:
